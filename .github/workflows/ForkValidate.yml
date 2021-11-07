@@ -1,0 +1,46 @@
+name: InfraCI - Fork PR Validation
+
+on:
+  #Run when PR's are made to main, where the changes are in the bicep directory or this workflow file itself
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "bicep/*"
+      - ".github/workflows/StandardCI.yml"
+
+env:
+  AZCLIVERSION: 2.29.2 #Pinning to a specific AZ CLI version
+  
+jobs:
+  Validation:
+    runs-on: ubuntu-latest
+    steps:
+      #Get the code files from the repo
+      - uses: actions/checkout@v2
+
+      - name: Job parameter check
+        run: |
+          RG='${{ env.RG }}'
+          echo "RG is: $RG"
+
+          echo "Param file path is: ${{github.actor}}"
+          echo "EventTrigger name is ${{github.event_name}}"
+          echo "Ref is ${{github.ref}}"
+          echo "Head Ref is ${{github.head_ref}}"
+          echo "Base Ref is ${{github.base_ref}}"
+
+      - name: Bicep linter
+        shell: pwsh
+        run: |
+          Write-Output "Run Bicep Linter"
+
+      - name: GitHub CLI
+        shell: pwsh
+        run: |
+          Write-Output "Comment back to the PR the linting results and nature of the change"
+          
+      - name: Check Changed Files
+        shell: pwsh
+        run: |
+          Write-Output "Check which files have been changed"
+          
