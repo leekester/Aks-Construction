@@ -1,46 +1,55 @@
 name: InfraCI - Fork PR Validation
 
 on:
-  #Run when PR's are made to main, where the changes are in the bicep directory or this workflow file itself
   pull_request:
     branches: [main, develop]
-    paths:
-      - "bicep/*"
-      - ".github/workflows/StandardCI.yml"
 
 env:
   AZCLIVERSION: 2.29.2 #Pinning to a specific AZ CLI version
-  
+
 jobs:
   Validation:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.fork
     steps:
-      #Get the code files from the repo
       - uses: actions/checkout@v2
 
       - name: Job parameter check
         run: |
-          RG='${{ env.RG }}'
-          echo "RG is: $RG"
-
-          echo "Param file path is: ${{github.actor}}"
           echo "EventTrigger name is ${{github.event_name}}"
-          echo "Ref is ${{github.ref}}"
-          echo "Head Ref is ${{github.head_ref}}"
-          echo "Base Ref is ${{github.base_ref}}"
-
-      - name: Bicep linter
-        shell: pwsh
-        run: |
-          Write-Output "Run Bicep Linter"
-
-      - name: GitHub CLI
-        shell: pwsh
-        run: |
-          Write-Output "Comment back to the PR the linting results and nature of the change"
+          echo "PR obj is ${{toJson(github.event.pull_request)}}"
+          echo "Is fork? ${{ github.event.pull_request.head.repo.fork }}"
           
-      - name: Check Changed Files
+      - name: Welcome the forker
         shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          Write-Output "Check which files have been changed"
+          Write-Output "Welcome Mr Forky"
+          $PRId="${{ github.event.pull_request.number }}"
           
+          gh pr comment $PRId --body "PR origin is from fork - thanks for the contribution!"
+          
+      - name: Add labels to PR that signal forked and full testing required
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $PRId="${{ github.event.pull_request.number }}"
+          
+          #if changes to bicep
+          gh pr edit $PRId --add-label "requires-full-validation,do-not-merge"
+          
+          #gh pr edit $PRId --add-label do-not-merge
+          
+      - name: List files changed in this PR
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $PRId="${{ github.event.pull_request.number }}"
+          
+          $files=gh pr view $PRId --json files --jq '.files.[].path'
+          
+          write-output $files
+  
