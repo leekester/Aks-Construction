@@ -6,7 +6,6 @@ name: InfraCI - ByoVnet cluster
 on:
   push:
     paths:
-      #- ".github/workflows/ByoVnetCI.yml"
       - ".github/workflows_dep/AksDeploy-ByoVnet.parameters.json"
       - "bicep/*"
 
@@ -68,6 +67,7 @@ jobs:
         
   #Pre deployment validation of the parameters + bicep code
   Validation:
+    if: ${{ github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     environment: azurecirgs
 
