@@ -24,6 +24,8 @@ Various workflows run on Push / PR / Schedule.
 
 Each has a *Validate job*, that is required to pass before merging to main. PR's tagged with `bug`, that contain changes to bicep or workflow files will need to pass all of the jobs in the relevant workflows before merge is possible.
 
+Because Pull Requests from Forks cannot leverage the GitHub secrets used for much of the validation, unless your proposed change is simple then you may be asked to re-raise your PR against the develop branch (see below).
+
 ## Branches
 
 ### Feature Branch
