@@ -32,7 +32,7 @@ env:
   
 jobs:
   Validation:
-    if: ${{ github.event.pull_request.head.repo.fork != true }}
+    if: ${{ github.event.pull_request.head.repo.fork != true }} #Forks have their own Validation path since they cannot leverage GitHub secrets
     runs-on: ubuntu-latest
     steps:
       #Get the code files from the repo
