@@ -45,6 +45,7 @@ jobs:
           echo "Param file path is: ${{ env.ParamFilePath }}"
           echo "Resource name is ${{ env.RESNAME }}
           echo "Deployment name is ${{ env.DEPNAME }}
+          echo "Is fork? ${{ github.event.pull_request.head.repo.fork }}"
 
       - name: Arm Parameter file check exists
         shell: pwsh
