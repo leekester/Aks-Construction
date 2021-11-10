@@ -41,7 +41,7 @@ on:
 concurrency: ci-${{ github.ref }}
 
 env:
-  AZCLIVERSION: 2.26.0 #latest #2.29.2 #2.26.0 #latest
+  AZCLIVERSION: latest #2.29.2 #2.26.0 #latest
   RG: "Automation-Actions-AksDeployCI"
   ParamFilePath: ".github/workflows_dep/AksDeploy-ByoVnet.parameters.json"
   RESNAME: "Byo"
@@ -248,6 +248,7 @@ jobs:
       - name: What If (AZ CLI 2.26.0)
         uses: Azure/cli@1.0.4
         if: steps.edgeWhatIf.outputs.edgeSuccess != 'true'
+        continue-on-error: true #Adding this as since 2.30 the whole Login/Credential cache thing has gone crazy unreliable https://github.com/Azure/cli/issues/56
         with:
           azcliversion: 2.26.0
           inlineScript: |
