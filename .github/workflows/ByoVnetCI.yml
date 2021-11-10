@@ -41,7 +41,7 @@ on:
 concurrency: ci-${{ github.ref }}
 
 env:
-  AZCLIVERSION: latest #2.29.2 #2.26.0 #latest
+  AZCLIVERSION: 2.26.0 #latest #2.29.2 #2.26.0 #latest
   RG: "Automation-Actions-AksDeployCI"
   ParamFilePath: ".github/workflows_dep/AksDeploy-ByoVnet.parameters.json"
   RESNAME: "Byo"
@@ -257,6 +257,8 @@ jobs:
             WHATIFPATH='whatif.json'
             EdgeWhatIfPassed='${{ steps.edgeWhatIf.outputs.edgeSuccess}}'
             PARAMS='${{ steps.imperitiveparams.outputs.PARAMOVERRIDES}}'
+
+            az version
 
             #az deployment group what-if --debug -f bicep/main.bicep -g $RG -p ${{ env.ParamFilePath }} -p resourceName=$RESNAME byoAKSSubnetId=${{ secrets.ByoAksSubnetId }} byoAGWSubnetId=${{ secrets.ByoAgwSubnetId }} 
 
