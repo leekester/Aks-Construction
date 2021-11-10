@@ -67,7 +67,7 @@ jobs:
         
   #Pre deployment validation of the parameters + bicep code
   Validation:
-    if: ${{ github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork }}
+    if: (${{ github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork }}) && ${{ github.event.inputs.doVerifySteps != 'no' }}
     runs-on: ubuntu-latest
     environment: azurecirgs
 
