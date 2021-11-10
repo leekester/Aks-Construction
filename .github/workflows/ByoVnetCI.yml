@@ -67,7 +67,7 @@ jobs:
         
   #Pre deployment validation of the parameters + bicep code
   Validation:
-    if: (${{ github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork }}) && ${{ github.event.inputs.doVerifySteps != 'no' }}
+    if: (${{ github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork }})
     runs-on: ubuntu-latest
     environment: azurecirgs
 
@@ -207,6 +207,7 @@ jobs:
 
       - name: Validate Infrastructure deployment
         uses: Azure/cli@1.0.4
+        if: github.event.inputs.doVerifySteps != 'no'
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
@@ -222,6 +223,7 @@ jobs:
       - name: What If (GA edge Az cli version) (has issues)
         uses: Azure/cli@1.0.4
         id: edgeWhatIf
+        if: github.event.inputs.doVerifySteps != 'no'
         continue-on-error: true
         with:
           azcliversion: latest #${{ env.AZCLIVERSION }}
@@ -247,7 +249,7 @@ jobs:
 
       - name: What If (AZ CLI 2.26.0)
         uses: Azure/cli@1.0.4
-        if: steps.edgeWhatIf.outputs.edgeSuccess != 'true'
+        if: steps.edgeWhatIf.outputs.edgeSuccess != 'true' && github.event.inputs.doVerifySteps != 'no'
         continue-on-error: true #Adding this as since 2.30 the whole Login/Credential cache thing has gone crazy unreliable https://github.com/Azure/cli/issues/56
         with:
           azcliversion: 2.26.0
@@ -293,12 +295,14 @@ jobs:
 
       - name: What If Analysis Output - Pester Testing
         shell: pwsh
+        if: github.event.inputs.doVerifySteps != 'no'
         run: |
           Write-Output "https://pester.dev/"
           Write-Output "TODO"
           
       - name: What If Analysis Gaps - Check for Soft deleted KeyVaults
         shell: pwsh
+        if: github.event.inputs.doVerifySteps != 'no'
         run: |     
           #This is a current gap in the What-If analysis.
           $whatifpath='whatif.json'
