@@ -846,7 +846,7 @@ jobs:
 
       - name: Install Cert Manager
         env:
-          MANIFESTTESTURL: "https://github.com/jetstack/cert-manager/releases/download/v1.6.0/cert-manager.yaml"
+          MANIFESTTESTURL: "https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.yaml"
         run: |
           kubectl apply -f $MANIFESTTESTURL
           sleep 1m
